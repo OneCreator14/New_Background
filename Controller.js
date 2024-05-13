@@ -1,54 +1,59 @@
+import Service from "./Service.js";
+
 class Controller {
-    async create(req, res) {
-        try {
-            const post = await PostService.create(req.body, req.files.picture)
-            res.json(post)
-        } catch (e) {
-            res.status(500).json(e)
-        }
-    }
 
     async Test(req, res) {
         try {
-            console.log("ответ отправлен")
-            res.json(123)
+            const test = Service.Test();
+            res.json(test);
+            console.log(test);
+            console.log('123');
         } catch (e) {
             res.status(500).json(e)
         }
     }
 
-    async getAll(req, res) {
-        try {
-            const posts = await PostService.getAll();
-            return res.json(posts);
-        } catch (e) {
-            res.status(500).json(e)
-        }
-    }
-    async getOne(req, res) {
-        try {
-            const post = await PostService.getOne(req.params.id)
-            return res.json(post)
-        } catch (e) {
-            res.status(500).json(e)
-        }
-    }
-    async update(req, res) {
-        try {
-            const updatedPost = await PostService.update(req.body);
-            return res.json(updatedPost);
-        } catch (e) {
-            res.status(500).json(e.message)
-        }
-    }
-    async delete(req, res) {
-        try {
-            const post = await PostService.create(req.params.id);
-            return res.json(post)
-        } catch (e) {
-            res.status(500).json(e)
-        }
-    }
+    // async create(req, res) {
+    //     try {
+    //         const post = await PostService.create(req.body, req.files.picture)
+    //         res.json(post)
+    //     } catch (e) {
+    //         res.status(500).json(e)
+    //     }
+    // }
+
+    // async getAll(req, res) {
+    //     try {
+    //         const posts = await PostService.getAll();
+    //         return res.json(posts);
+    //     } catch (e) {
+    //         res.status(500).json(e)
+    //     }
+    // }
+    // async getOne(req, res) {
+    //     try {
+    //         const post = await PostService.getOne(req.params.id)
+    //         return res.json(post)
+    //     } catch (e) {
+    //         res.status(500).json(e)
+    //     }
+    // }
+    // async update(req, res) {
+    //     try {
+    //         const updatedPost = await PostService.update(req.body);
+    //         return res.json(updatedPost);
+    //     } catch (e) {
+    //         res.status(500).json(e.message)
+    //     }
+    // }
+    // async delete(req, res) {
+    //     try {
+    //         const post = await PostService.create(req.params.id);
+    //         return res.json(post)
+    //     } catch (e) {
+    //         res.status(500).json(e)
+    //     }
+    // }
 }
 
 

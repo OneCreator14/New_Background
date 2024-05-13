@@ -2,6 +2,10 @@ import express from 'express'
 import router from './router.js';
 import fileUpload from 'express-fileupload';
 
+import sqlite3 from 'sqlite3';
+
+let sql;
+
 const PORT = 5000;
 
 const app = express();
