@@ -1,5 +1,5 @@
 import express from 'express';
-import router from './router.js';
+// import router from './router.js';
 import fileUpload from 'express-fileupload';
 
 import mysql from "mysql";
@@ -19,7 +19,7 @@ const __dirname = path.dirname(__filename);
 app.use(express.json());
 app.use(express.static('static'));
 app.use(fileUpload({}));
-app.use('/api', router);
+//app.use('/api', router);
 
 const connection = mysql.createConnection({
     host: "hukibeho.beget.app",
