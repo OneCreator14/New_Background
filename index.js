@@ -144,9 +144,15 @@ connection.end(err => {
 
 
 app.get('/downloadrequest', function (req, res) {
-    const file = `Result/Request.docx`;
+    const file = `Result/Sportsmen/Request.docx`;
     res.download(file); // Set disposition and send it.
 });
+
+app.get('/downloaddecision', function (req, res) {
+    const file = `Result/Sportsmen/Decision.docx`;
+    res.download(file); // Set disposition and send it.
+});
+
 
 
 app.post('/createrequest', async (req, res) => {
