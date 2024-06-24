@@ -12,8 +12,15 @@
   "description": "",
   "dependencies": {
     "cors": "^2.8.5",
+    "docxtemplater": "^3.47.4",
     "express": "^4.19.2",
     "express-fileupload": "^1.5.0",
+    "mogoose": "^0.0.1-security",
+    "mongodb": "^6.7.0",
+    "mongoose": "^8.4.3",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.10.1",
+    "pizzip": "^3.1.7",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
     "uuid": "^9.0.1"
