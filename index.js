@@ -10,12 +10,15 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from 'url';
 
+import cors from 'cors';
+
 
 const PORT = 5000;
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+app.use(cors())
 app.use(express.json());
 app.use(express.static('static'));
 app.use(fileUpload({}));
@@ -141,6 +144,28 @@ connection.end(err => {
 
     }
 })
+
+// Тестовая площкадка запросов
+
+const urlencodedParser = express.urlencoded({extended: false});
+
+app.get("/test", function (_, response) {
+    response.sendFile(__dirname + "/Result/Sportsmen/Decision.docx");
+});
+
+app.post("/test", urlencodedParser, function (request, response) {
+    if(!request.body) return response.sendStatus(400);
+    console.log(request.body);
+    response.send(`${request.body.userName} - ${request.body.userAge}`);
+});
+
+// app.post('/test', (request, response) => {
+//     if(!request.body) return response.sendStatus(400);
+//     console.log(request.body);
+//     response.send(`${request.body.userName} - ${request.body.userAge}`);
+//   });
+
+// Тестовая площадка закрывается, просьба всем на выход
 
 
 app.get('/downloadrequest', function (req, res) {
