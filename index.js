@@ -58,6 +58,11 @@ app.post("/test", urlencodedParser, function (request, response) {
 
 
 // Запросы запросецы
+app.get("/downloadc", function (_, response) {
+    // response.sendFile(__dirname + "/Result/Sportsmen/Decision.docx");
+    console.log("получили запрос")
+    response.download(__dirname + "/Requests/25-06-2024/1.pdf");
+});
 
 app.get("/dbtable", function (_, response) {
     console.log("получили запрос get на /dbtable");
@@ -194,7 +199,7 @@ app.post('/createdecision', async (req, res) => {
     const Data = {
         date, number, category, name, sport, district
     }
-    console.log("Я моргнул что было x2");
+
     CreateDoc("/Templates/Sportsmen/", "Decision.docx", Data, "/Result/Sportsmen/", "Decision.docx");
     const file = `/Result/Sportsmen/Decision.docx`;
     res.download(file);
