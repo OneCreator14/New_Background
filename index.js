@@ -12,43 +12,193 @@ import { fileURLToPath } from 'url';
 
 import cors from 'cors';
 
-
 const PORT = 5000;
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+let Data = [1];
 
-app.use(cors())
+app.use(cors());
 app.use(express.json());
 app.use(express.static('static'));
 app.use(fileUpload({}));
+app.set('json spaces', 2)
 //app.use('/api', router);
 
-const connection = mysql.createConnection({
-    host: "hukibeho.beget.app",
-    port: "3306",
-    user: "default-db",
-    database: "default-db",
-    password: "Paniola12!",
+let query = "SELECT * FROM Sportsmen";
+
+
+// Render the document (Replace {first_name} by John, {last_name} by Doe, ...)
+// const Data = {
+//     date: "24 июня 2024",
+//     number: "1",
+//     category: "«первый спортивный разряд»",
+//     sport: "Дзюдо",
+//     district: "г. Кингисепп",
+//     name: "Чиобану Елизавета",
+// }
+
+// Тестовая площкадка запросов
+
+const urlencodedParser = express.urlencoded({ extended: false });
+
+app.get("/test", function (_, response) {
+    // response.sendFile(__dirname + "/Result/Sportsmen/Decision.docx");
+    console.log("получили запрос")
+    response.download(__dirname + "/Result/Sportsmen/Decision.docx");
+});
+
+app.post("/test", urlencodedParser, function (request, response) {
+    const { test1, test2 } = request.body;
+    console.log("Тело запроса:" + test1 + " " + test2);
+    response.send(request.body);
+});
+
+// Тестовая площадка закрывается, просьба всем на выход
+
+
+// Запросы запросецы
+
+app.get("/dbtable", function (_, response) {
+    console.log("получили запрос get на /dbtable");
+
+    connection.connect(err => {
+        if (err) {
+            console.log(err);
+            return err;
+        }
+        else {
+            console.log("Соединение открыто");
+        }
+    })
+
+    // президиум
+    let query = "SELECT * FROM Presidium";
+    connection.query(query, (_, result) => {
+        // for (var i = 0; i < 8; i++) {
+        // }
+        // result.forEach((element, i) => {
+
+        //     Data.push({
+        //         full_name: element['Full_Name'],
+        //         post: element['Post']
+        //     });
+        // });
+
+        // console.log("Финал:");
+        // console.log(JSON.stringify(result));
+
+        response.send(result);
+    });
+
+    connection.end(err => {
+        if (err) {
+            console.log(err);
+            return err;
+        }
+        else {
+            console.log("Соединение закрыто");
+        }
+    })
+});
+
+app.get('/sportsmandoc', function (_, res) {
+    const connection = mysql.createConnection({
+        host: "hukibeho.beget.app",
+        port: "3306",
+        user: "default-db",
+        database: "default-db",
+        password: "Paniola12!",
+    });
+
+    connection.connect(err => {
+        if (err) {
+            console.log(err);
+            return err;
+        }
+        else {
+            console.log("Соединение открыто");
+        }
+    })
+
+    let query = "SELECT * FROM Sportsmen WHERE Federation_ID = 1";
+    
+    connection.query(query, (_, result) => {
+        const Data = {
+            full_name1: '',
+            full_name2: '',
+            full_name3: '',
+            full_name4: '',
+            full_name5: '',
+        };
+        
+        console.log(result[0]['Full_Name']);
+
+        Data.full_name1 = result[0]['Full_Name'];
+        Data.full_name2 = result[1]['Full_Name'];
+        Data.full_name3 = result[2]['Full_Name'];
+        Data.full_name4 = result[3]['Full_Name'];
+        Data.full_name5 = result[4]['Full_Name'];
+    
+
+        console.log(Data);
+        res.send(Data);
+
+        connection.end(err => {
+            if (err) {
+                console.log(err);
+                return err;
+            }
+            else {
+                console.log("Соединение закрыто");
+            }
+        })
+    });
+
+})
+
+
+app.get('/downloadrequest', function (_, res) {
+    const file = __dirname + `/Result/Sportsmen/Request.docx`;
+    res.download(__dirname + "/Result/Sportsmen/Request.docx");
+});
+
+app.get('/downloaddecision', function (_, res) {
+    const file = __dirname + `/Result/Sportsmen/Decision.docx`;
+    res.download(file);
 });
 
 
 
-
-function CreateRequest() {
+app.post('/createrequest', async (req, res) => {
+    const { federation, full_name, birth_date, person_document, category, competition_status, sport, competition_name, result } = req.body;
     const Data = {
-
+        federation,
+        full_name,
+        birth_date,
+        person_document,
+        category,
+        competition_status,
+        sport,
+        competition_name,
+        result
     }
+    console.log("Я моргнул что было");
+    console.log(Data);
     CreateDoc("/Templates/Sportsmen/", "Request.docx", Data, "/Result/Sportsmen/", "Request.docx");
-}
+});
 
-function CreateDecision() {
+
+app.post('/createdecision', async (req, res) => {
+    const { date, number, category, name, sport, district } = req.body;
     const Data = {
-
+        date, number, category, name, sport, district
     }
+    console.log("Я моргнул что было x2");
     CreateDoc("/Templates/Sportsmen/", "Decision.docx", Data, "/Result/Sportsmen/", "Decision.docx");
-}
-
+    const file = `/Result/Sportsmen/Decision.docx`;
+    res.download(file);
+});
 
 
 //
@@ -86,130 +236,33 @@ function CreateDoc(template_path, template_name, Data, result_path, result_name)
 
 
 
-connection.connect(err => {
-    if (err) {
-        console.log(err);
-        return err;
-    }
-    else {
-        console.log("Соединение открыто");
-
-    }
-})
-
-let query = "SELECT * FROM Sportsmen";
-const Data = {
-    date: "",
-    number: "",
-    category: "",
-    sport: "",
-    district: "",
-    name: "",
-}
-
-connection.query(query, (err, result, field) => {
-    //console.log(err);
-    console.log(result[0]);
-    //console.log(query);
-
-    Data.full_name = result[0]['Full_Name'];
-    Data.birth_date = result[0]['Birth_date'];
-    Data.person_document = result[0]['Person_document_data'];
-
-
-    CreateDoc("/Templates/Sportsmen/", "Request.docx", Data, "/Result/Sportsmen/", "Request.docx");
-
-});
 
 
 
-// Render the document (Replace {first_name} by John, {last_name} by Doe, ...)
-// const Data = {
-//     date: "24 июня 2024",
-//     number: "1",
-//     category: "«первый спортивный разряд»",
-//     sport: "Дзюдо",
-//     district: "г. Кингисепп",
-//     name: "Чиобану Елизавета",
-// }
-
-
-connection.end(err => {
-    if (err) {
-        console.log(err);
-        return err;
-    }
-    else {
-        console.log("Соединение закрыто");
-
-    }
-})
-
-// Тестовая площкадка запросов
-
-const urlencodedParser = express.urlencoded({extended: false});
-
-app.get("/test", function (_, response) {
-    response.sendFile(__dirname + "/Result/Sportsmen/Decision.docx");
-});
-
-app.post("/test", urlencodedParser, function (request, response) {
-    if(!request.body) return response.sendStatus(400);
-    console.log(request.body);
-    response.send(`${request.body.userName} - ${request.body.userAge}`);
-});
-
-// app.post('/test', (request, response) => {
-//     if(!request.body) return response.sendStatus(400);
-//     console.log(request.body);
-//     response.send(`${request.body.userName} - ${request.body.userAge}`);
-//   });
-
-// Тестовая площадка закрывается, просьба всем на выход
-
-
-app.get('/downloadrequest', function (req, res) {
-    const file = `Result/Sportsmen/Request.docx`;
-    res.download(file); // Set disposition and send it.
-});
-
-app.get('/downloaddecision', function (req, res) {
-    const file = `Result/Sportsmen/Decision.docx`;
-    res.download(file); // Set disposition and send it.
-});
 
 
 
-app.post('/createrequest', async (req, res) => {
-    const {federation, full_name, birth_date, person_document, category, competition_status, sport, competition_name, result} = req.body;
-    const Data = {
-        federation,
-        full_name,
-        birth_date,
-        person_document, 
-        category, 
-        competition_status, 
-        sport, 
-        competition_name, 
-        result
-    }
-    console.log("Я моргнул что было");
-    CreateDoc("/Templates/Sportsmen/", "Request.docx", Data, "/Result/Sportsmen/", "Request.docx");
-    const file = `Result/Sportsmen/Request.docx`;
-    res.download(file);
-});
 
 
-app.post('/createdecision', async (req, res) => {
-    const {date, number, category, name, sport, district} = req.body;
-    const Data = {
-        date, number, category, name, sport, district
-    }
-    console.log("Я моргнул что было x2");
-    CreateDoc("/Templates/Sportsmen/", "Decision.docx", Data, "/Result/Sportsmen/", "Decision.docx");
-    const file = `Result/Sportsmen/Decision.docx`;
-    res.download(file);
-});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
